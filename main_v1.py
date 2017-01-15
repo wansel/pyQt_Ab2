@@ -143,6 +143,7 @@ class Tela(QWidget):
 			if (self.ln_conta.text() in contas and msg>0 and ok):
 				contas[self.ln_conta.text()] += msg
 				transacoes.append([self.ln_conta.text(), msg])
+				self.UpdateUltimaAcao("Depóstio no valor de R${} efetuado com sucesso".format(msg))
 			elif(msg<=0 and ok):
 				self.UpdateUltimaAcao("Valor inválido.")
 			elif(not ok):
@@ -152,22 +153,22 @@ class Tela(QWidget):
 	#Extrato
 	def imprimirExtrato(self):
 		if(self.ln_conta.text() in contas):
-			extrato = "<b>Extrato - Conta "+self.ln_conta.text() + "</b><ln><br/>"
+			extrato = "<b>Extrato - Conta </b>"+self.ln_conta.text() + "<br/><hr>"
 			for x in transacoes:
 				if(x[0] == self.ln_conta.text()):
-					extrato+= "R$ "+str(x[1])
+					extrato+= "R$ {:.2f}".format(x[1])
 					if(x[1]>0): #Operações iguais a zero são proibídas pelo sistema (exceto a de cadastro)
 						extrato += " ( Depósito)<br/>"
 					elif(x[1]<0):
 						extrato += " (Saque)<br/>"
 					else:
 						extrato+= " (Abertura)<br/>"
+			extrato+= " <hr><br>Saldo Atual: R${:.2f}".format(contas[self.ln_conta.text()])
 			msg = QMessageBox(self)
 			msg.setText(extrato)
 			msg.setWindowTitle("Extrato")
 			msg.setStandardButtons(QMessageBox.Yes)
 			msg.exec_()
-			print(extrato)
 			self.UpdateUltimaAcao("Extrato verificado")
 		else:
 			self.UpdateUltimaAcao("Conta não existente")
