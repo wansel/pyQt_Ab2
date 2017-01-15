@@ -3,25 +3,20 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QGridLayout,QLineEdit, QInputDialog,QMessageBox)
 
-from errors import ValorInvalidoError
-from errors import SaldoInsuficienteError
-from conta import Conta
 # add:Cores
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 
-#from tela import *
-##################################
 contas = {}
 transacoes = []
 
 class Tela(QWidget):
+	
 	def __init__(self, parent=None):
 		super(Tela, self).__init__()
 		self.initUI(self)
-
+		
 	def initUI(self,args):
-		palette = QtGui.QPalette()
 		#Adicionando Fontes
 		QtGui.QFontDatabase.addApplicationFont("font/Roboto-BlackItalic.ttf")
 		QtGui.QFontDatabase.addApplicationFont("font/Roboto-Bold.ttf")
@@ -36,14 +31,12 @@ class Tela(QWidget):
 		QtGui.QFontDatabase.addApplicationFont("font/Roboto-ThinItalic.ttf")
 		QtGui.QFontDatabase.addApplicationFont("font/Roboto-Black.ttf")
 		#Definindo cor de fundo da Janela
+		palette = QtGui.QPalette()
 		palette.setColor(QtGui.QPalette.Background, QtGui.QColor(0xbdbdbd)) #
-		#self = QWidget()
-		#window.resize(9,16)
 		self.setWindowTitle('Sistema Bancário - Wansel Lemos')
 		self.setPalette(palette)
 		self.show()
-		
-		#Criando componentes
+		#Criando os componentes
 		self.lb_inicio = QLabel('<h1>Bem vindo, como deseja prosseguir?<h1>', self)
 		self.ln_conta = QLineEdit(self)
 		self.bt_cadastro = QPushButton('Cadastrar conta', self)
@@ -53,20 +46,17 @@ class Tela(QWidget):
 		self.bt_extrato = QPushButton('Imprimir Extrato', self)
 		self.bt_sair = QPushButton('Encerrar', self)
 		self.lb_ultimaAcao = QLabel('',self)
-
-		#Dicas
+		#Dicas (Tooltips)
 		self.bt_cadastro.setToolTip("Cadastre uma nova conta no sistema")
 		self.bt_saldo.setToolTip("Verifique o saldo de uma conta")
 		self.bt_saque.setToolTip("Realize um saque em uma conta. A mesma deve ser previamente cadastrada no sistema.")
 		self.bt_deposito.setToolTip("Deposite um valor após informar o número da conta")
 		self.bt_extrato.setToolTip("Imprima na tela o histórico de transações de uma conta")
 		self.bt_sair.setToolTip("Encerre o programa, as informações serão perdidas :(")
-		
-		#Formatação
+		#Formatação (folha de estilos, personalização dos botões e labels)
 		sshFile = "style.stylesheet"
 		with open(sshFile,"r") as fh:
 			self.setStyleSheet(fh.read())
-
 		#Ações
 		self.bt_cadastro.clicked.connect(self.cadastrarConta)
 		self.bt_saldo.clicked.connect(self.checarSaldo)
@@ -75,9 +65,9 @@ class Tela(QWidget):
 		self.bt_extrato.clicked.connect(self.imprimirExtrato)
 		self.bt_sair.clicked.connect(self.sair)
 
-		#Grid Layout - adicionando componentes
+		#Grid Layout
 		grid = QGridLayout(self)
-		
+		#Posicionando os componentes na grade
 		grid.addWidget(self.lb_inicio,1,1,1,1)
 		grid.addWidget(self.ln_conta,2,1,1,1)
 		grid.addWidget(self.bt_cadastro,4,1,1,1)
@@ -89,10 +79,10 @@ class Tela(QWidget):
 		grid.addWidget(self.lb_ultimaAcao,11,1,2,1)
 		self.ln_conta.setText("Digite o número da conta neste campo")
 		self.setLayout(grid)
-		
+	#Atualização label que mostra a ultima ação do usuário
 	def UpdateUltimaAcao(self,acao):
 		self.lb_ultimaAcao.setText(acao)
-
+	#Cadastrar Conta
 	def cadastrarConta(self):
 		try:
 			msg = QMessageBox(self)
@@ -117,9 +107,6 @@ class Tela(QWidget):
 			ErrorMessage.setInformativeText(error)
 			ErrorMessage.setStandardButtons(QMessageBox.Yes)
 			ErrorMessage.exec_()
-
-		#self.lb_inicio.setText("Clicou no botao cadastrar")
-	
 	#Saldo
 	def checarSaldo(self):
 		if self.ln_conta.text() in contas:
@@ -132,7 +119,7 @@ class Tela(QWidget):
 			msg.exec_()
 		else:
 			self.UpdateUltimaAcao("Conta não existente")
-	#– Saque
+	#Saque
 	def realizarSaque(self):
 		ok = False
 		if self.ln_conta.text() in contas:
@@ -148,7 +135,7 @@ class Tela(QWidget):
 		else:
 			self.UpdateUltimaAcao("Conta não existente")
 
-	#– Depósito
+	#Depósito
 	def realizarDeposito(self):
 		ok = False
 		if self.ln_conta.text() in contas:
@@ -162,7 +149,7 @@ class Tela(QWidget):
 				self.UpdateUltimaAcao("Operação de Depósito cancelada pelo usuário")
 		else:
 			self.UpdateUltimaAcao("Conta não existente")
-	#- Extrato
+	#Extrato
 	def imprimirExtrato(self):
 		if(self.ln_conta.text() in contas):
 			extrato = "<b>Extrato - Conta "+self.ln_conta.text() + "</b><ln><br/>"
@@ -184,31 +171,11 @@ class Tela(QWidget):
 			self.UpdateUltimaAcao("Extrato verificado")
 		else:
 			self.UpdateUltimaAcao("Conta não existente")
-
+	#Sair do sistema
 	def sair(self):
-		for x in contas:
-			print (x)
-		print (contas)
 		self.close()
-
-
-
-##################################
-
-#criarTela
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	window = Tela()
-	for x in contas:
-		print (x)
-	sys.exit(app.exec_())	
-#criarLabel
-	
-#posicionarLabelNaTela
-#● Selecionar uma conta
-#● Realizar as operações:
-#– Saldo
-#– Saque
-#– Depósito
-# 1 ponto adicional (apenas para este projeto)
+	sys.exit(app.exec_())
