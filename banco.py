@@ -19,18 +19,20 @@ def saque(conta):
         valor = input("Digite o valor desejado: R$ ")
         conta.op_saque(valor)
         print("Saque realizado com sucesso!")
-    except ValorInvalidoError as vie:
-        print(vie)
+    except NameError as vie:
+        SaldoInsuficienteError(vie)
     except SaldoInsuficienteError as sie:
         print(sie)
 
 def deposito(conta):
     try :
         valor = input("Digite o valor desejado: R$ ")
-        conta.op_deposito(valor)
-        print("Deposito realizado com sucesso!")
     except ValorInvalidoError as vie:
         print(vie)
+    conta.op_deposito(valor)
+    print("Deposito realizado com sucesso!")
+    #except ValorInvalidoError as vie:
+    #    print(vie)
 
 while True:
     opc = menu()
